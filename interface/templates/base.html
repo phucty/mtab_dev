@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="icon" href="{{url_for('static', filename='images/logo_mtab_3.png')}}" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+          integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/59ec0a646c.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.16/css/bootstrap-multiselect.min.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+</head>
+
+<body>
+
+<nav class="navbar sticky-top navbar-expand-sm navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href={{ url_for("call_route_mtabes") }}>
+            <img src="{{url_for('static', filename='images/logo_mtab_1.png')}}" alt="" height=60>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse " id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {#                <li class="nav-item active">#}
+                {#                    <a class="nav-link" href="#">Home<span class="sr-only">(current)</span></a>#}
+                {#                </li>#}
+                <li class="nav-item dropdown active">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        Entity Search
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href={{ url_for("mtabes_api_docs") }}>API Usage</a>
+                        <a class="dropdown-item" href={{ url_for("call_route_mtabes") }}>Interface</a>
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown active">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        Table Annotation
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href={{ url_for("mtab_api_docs") }}>API Usage</a>
+                        <a class="dropdown-item" href={{ url_for("call_mtab") }}>Interface</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">QA</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Data Analysis</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="https://github.com/phucty/mtab_tool" tabindex="-1">Github</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<div class="container">
+    {% block content %}
+
+    {% endblock %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
+<br/>
+<br/>
+<br/>
+<footer class="text-center fixed-bottom bg-light" >
+    <div class="container" style="padding-top: 10px; padding-bottom: 15px">
+
+            <div class="row">
+                <div class="col-lg-12">
+{#                    Copyright © 2021&nbsp;|&nbsp;#}
+{#                    <a href="http://www-kasm.nii.ac.jp/~takeda/group.html"#}
+{#                       referrerpolicy="no-referrer">Takedaken</a>#}
+{#                    &nbsp;|&nbsp;<a href="https://www.nii.ac.jp/en/faculty/informatics/"#}
+{#                                    referrerpolicy="no-referrer">#}
+{#                    Principles of Informatics Research Division</a>&nbsp;|&nbsp;<a#}
+{#                        href="https://www.nii.ac.jp/en/"#}
+{#                        referrerpolicy="no-referrer">#}
+{#                    National Institute of Informatics</a>#}
+                    © 2021&nbsp;|&nbsp;
+                    <a href="https://www.nii.ac.jp/en/">
+                    National Institute of Informatics</a>
+                </div>
+            </div>
+    </div>
+</footer>
+{#<nav class="navbar navbar-light bg-light">#}
+{#    <div class="container">#}
+{#    <table align="center">#}
+{#        <tbody>#}
+{#        <tr>#}
+{#            <td valign="middle" style="padding-top: 20px">#}
+{#                <div class="container mb-3">#}
+{#                    Copyright © 2021&nbsp;|&nbsp;#}
+{#                    <a href="http://www-kasm.nii.ac.jp/~takeda/group.html"#}
+{#                       referrerpolicy="no-referrer">Takedaken</a>#}
+{#                    &nbsp;|&nbsp;<a href="https://www.nii.ac.jp/en/faculty/informatics/"#}
+{#                                    referrerpolicy="no-referrer">#}
+{#                    Principles of Informatics Research Division</a>&nbsp;|&nbsp;<a#}
+{#                        href="https://www.nii.ac.jp/en/"#}
+{#                        referrerpolicy="no-referrer">#}
+{#                    National Institute of Informatics</a>#}
+{#                </div>#}
+{#            </td>#}
+{#            <td>#}
+{#                <img src="{{url_for('static', filename='images/niiLogoSmall.gif')}}" alt="" height=40>#}
+{#                <img style="height: 50px" src="{{url_for('static', filename='images/en_mainLogo.gif')}}" class="img-fluid" alt="logo">#}
+{#            </td>#}
+{#        </tr>#}
+{#        </tbody>#}
+{#    </table>#}
+{#        </div>#}
+{#    </nav>#}
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.16/js/bootstrap-multiselect.min.js"></script>
+
+</body>
+</html>

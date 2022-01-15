@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %}MTabES Entity Search{% endblock %}
+{% block content %}
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"
+          rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons'
+          rel="stylesheet"
+          type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css"
+          rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
+          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css"
+          rel="stylesheet">
+    {#    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui"#}
+    {#          name="viewport">#}
+    {#    <style>#}
+    {#        .v-toolbar__content {#}
+    {#            padding-left: 0;#}
+    {#        }#}
+    {#    </style>#}
+    {#    #}
+    {#    <div class="container col-xs-12 col-sm-12 col-md-12 col-lg-5 offset-xs-0 offset-sm-0 offset-md-0 offset-lg-0">#}
+    {#    <div class="input-group">#}
+    {##}
+    {#        <input autocomplete="off" type="text" class="form-control shadow-1"#}
+    {#               placeholder="what do you want to search for?" id="full">#}
+    {##}
+    {#        <button type="button" class="btn btn-success shadow-1" id="search"#}
+    {#                style="border-top-left-radius: 0px; border-bottom-left-radius: 0px;">Search#}
+    {#        </button>#}
+    {#    </div>#}
+    {#    </div>#}
+    <div id="app" class="container-fluid">
+        <v-app>
+            <v-container>
+                <v-row>
+                    <v-text-field
+                            clearable
+                            counter="512"
+                            filled
+                            label="Search relevant entities from Wikidata, Wikipedia, and DBpedia"
+                            outlined
+                            v-model="query"
+                            v-on:keyup.enter="submit">
+                    </v-text-field>
+                    <v-btn class="mx-2" @click="submit" color="primary" fab>
+                        <v-icon dark> search</v-icon>
+                    </v-btn>
+                </v-row>
+            </v-container>
+            <v-content>
+                <v-row>
+                    <v-col>
+                        <template :value="result" v-if="'hits' in result">
+                            <h3>
+                                About [[ result.total ]] results ([[
+                                result.run_time ]] seconds)
+                            </h3>
+
+                            <v-card :key="item" flat
+                                    v-for="(item, index) in result.hits">
+                                <v-card-title>
+                                    [[ item.label ]]
+                                </v-card-title>
+
+                                <v-row align="center" class="ml-0" justify="around">
+                                    <v-btn :href="item.wd" class="mx-2"
+                                           color="primary"
+                                           dark x-small>
+                                        Wikidata
+                                    </v-btn>
+
+                                    <div v-if="item.wp">
+                                        <v-btn :href="item.wp" class="mx-2"
+                                               color="warning" x-small>
+                                            Wikipedia
+                                        </v-btn>
+                                    </div>
+
+                                    <div v-if="item.dp">
+                                        <v-btn :href="item.dp" class="mx-2"
+                                               color="success" x-small>
+                                            DBpedia
+                                        </v-btn>
+                                    </div>
+                                </v-row>
+                                <v-card-text font-weight-bold>
+                                    <b>Score | Aggregation: [[ item.score ]] | Fuzzy: [[item.score_fuzzy]] | BM25:
+                                        [[item.score_bm25]]</b>
+                                    <br> <strong><b> [[ item.id ]] </b></strong>
+                                    <br> <strong><b>Description:</b> [[ item.des ]]</strong>
+
+                                </v-card-text>
+                                <!--                <v-list-group no-action sub-group :value="false">-->
+                                <!--                  <template v-slot:activator>-->
+                                <!--                    <v-list-item-content>-->
+                                <!--                      <v-list-item-title>Similar sentences</v-list-item-title>-->
+                                <!--                    </v-list-item-content>-->
+                                <!--                  </template>-->
+                                <!--                   <v-list-item v-for="(sentence_key, sentence_item) in item.search_results" :key="sentence_key">-->
+                                <!--                    <v-list-item-subtitle>[[sentence_key.score]]: [[sentence_key.sentence]]</v-list-item-subtitle>-->
+                                <!--                  </v-list-item>-->
+                                <!--                </v-list-group>-->
+                            </v-card>
+
+
+                            <!--                <v-card-actions>-->
+                            <!--                  <v-chip class="primary">[[ item._score ]]</v-chip>-->
+                            <!--                </v-card-actions>-->
+
+                            </v-card>
+                            </v-card>
+                        </template>
+                    </v-col>
+                </v-row>
+            </v-content>
+        </v-app>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        axios.defaults.xsrfCookieName = 'csrftoken';
+        axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+        const base_url = window.location.href;
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            delimiters: ['[[', ']]'],
+            data: {
+                query: '',
+                result: []
+            },
+            created() {
+                this.query = 'Tokyo Olimpic'
+                this.search()
+            },
+            methods: {
+                search() {
+                    axios.get(`${base_url}search?q=${this.query}`).then(response => {
+                        this.result = response.data;
+                    })
+                },
+                submit() {
+                    if (this.query === '') {
+                        this.result = [];
+                        return;
+                    }
+                    this.search()
+                }
+            }
+        })
+    </script>
+{% endblock %}

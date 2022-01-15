@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}MTabES Entity Search{% endblock %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group border-bottom">
+                <legend class="border-bottom mb-4">Entity Search</legend>
+                <div class="container mb-2">
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <div class="form-group">
+                                {% if form.query.errors %}
+                                    {{ form.query(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.query.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.query(class="form-control form-control-lg", placeholder="Search relevant entities from Wikidata, Wikipedia, and DBpedia", type="search") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="form-group">
+                                {{ form.search(class="btn btn-lg btn-outline-primary btn-block") }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-inline">
+                        <div class="col-sm-3">
+                            <div class="form-group custom-control-inline">
+                                <div class="col-sm-2">
+                                {{ form.limit.label(class="col-lg-2 col-form-label") }}
+                                    </div>
+                                        <div class="col-sm-1">
+                                {{ form.limit(class="form-control ") }}
+                                {#                                {{ form.language.label(class="form-check-label") }}#}</div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-select">
+                                {{ form.language(class="form-control ") }}
+                                {#                                {{ form.language.label(class="form-check-label") }}#}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-select">
+                                {{ form.mode(class="form-control") }}
+                                {#                                {{ form.mode.label(class="form-check-label") }}#}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check">
+                                {{ form.efficient(class=" form-check form-check-input") }}
+                                {{ form.efficient.label(class="form-check-label") }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </fieldset>
+
+        </form>
+    </div>
+    {% if responds %}
+        <div class="container">
+            <h5>About {{ total }} results ({{ run_time }} seconds)</h5>
+        </div>
+{#                {{ pagination.links }}#}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Top</th>
+                    <th>Result</th>
+                    <th>Information</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                {% for respond in responds %}
+                    <tr>
+{#                        <td>{{ loop.index + (page - 1) * per_page }}</td>#}
+                    <td>{{ loop.index  }}</td>
+                        <td>
+                            {% if respond.wd %}
+                                <a class="btn btn-outline-primary btn-sm btn-block" href={{ respond.wd }}>
+                                    Wikidata
+                                </a>
+                            {% endif %}
+                            {% if respond.wp %}
+                                <a class="btn btn-outline-info btn-sm btn-block" href={{ respond.wp }}>
+                                    Wikipedia
+                                </a>
+                            {% endif %}
+                            {% if respond.dp %}
+                                <a class="btn btn-outline-success btn-sm btn-block" href={{ respond.dp }}>
+                                    DBpedia
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong><b>{{ respond.label }}</b></strong>
+                            <br> <b> Wikidata ID: </b> {{ respond.id }}
+                            <br>
+                            {% if respond.score_fuzzy %}
+                                <b>Aggregation:</b> {{ respond.score }} | <b>Fuzzy:</b> {{ respond.score_fuzzy }} |
+                                <b>BM25:</b> {{ respond.score_bm25 }}
+                            {% else %}
+                                <b>Score:</b> {{ respond.score }}
+                            {% endif %}
+
+                            <br> <b>Description: </b> {{ respond.des }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    {% endif %}
+
+{% endblock %}
